@@ -28,10 +28,15 @@ elif [ "$RUNTIME" = 'python' ]
 else
     printf 'RUNTIME parameter must be either nodejs or python' 
     exit 1   
-fi                
-RESOURCE_TYPES=${RESOURCE_TYPES//\"/}
-RESOURCE_TYPES=${RESOURCE_TYPES//,/\",\"}
-RESOURCE_TYPES="[\"$RESOURCE_TYPES\"]"
+fi
+
+if [ "$RESOURCE_TYPES" != 'periodic' ]
+then
+    RESOURCE_TYPES=${RESOURCE_TYPES//\"/}
+    RESOURCE_TYPES=${RESOURCE_TYPES//,/\",\"}
+    RESOURCE_TYPES="[\"$RESOURCE_TYPES\"]"
+fi
+
 zip -j $RULE_NAME.zip $CODE_FILE ruleCode/python/rule_util.py > /dev/null
 if aws --profile $PROFILE iam get-role --role-name config_lambda_basic_execution 2>&1 | grep -q 'Role not found'
     then
@@ -53,7 +58,16 @@ aws --profile $PROFILE lambda create-function --function-name $RULE_NAME --zip-f
 aws --profile $PROFILE lambda update-function-code --function-name $RULE_NAME --zip-file fileb://$RULE_NAME.zip > /dev/null
 aws --profile $PROFILE lambda add-permission --function-name $RULE_NAME --statement-id 1 --principal config.amazonaws.com --action lambda:InvokeFunction > /dev/null 2>&1
 LAMBDA_ARN=$(aws --profile $PROFILE lambda get-function --function-name $RULE_NAME --query Configuration.FunctionArn --output text)
-CONFIG_RULE=$(<"ruleUtil/configRule.json")
+
+echo "RESOURCE TYPES : $RESOURCE_TYPES"
+if [ "$RESOURCE_TYPES" = 'periodic' ]
+then
+    echo "Perdiodic function, no scope."
+    CONFIG_RULE=$(<"ruleUtil/configRulePeriodic.json")
+else
+    CONFIG_RULE=$(<"ruleUtil/configRule.json")
+fi
+
 PARAMETERS=$(<"ruleCode/ruleParameters.txt")
 PARAMETERS=${PARAMETERS//\"/\\\"}
 CONFIG_RULE=${CONFIG_RULE//<RULE_NAME>/\"$RULE_NAME\"}

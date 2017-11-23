@@ -1,0 +1,17 @@
+{
+	"ConfigRuleName": <RULE_NAME>,
+	"Description": "custom rule",
+	"Scope": {},
+	"Source": {
+		"Owner": "CUSTOM_LAMBDA",
+		"SourceIdentifier": <LAMBDA_ARN>,
+		"SourceDetails": [{
+            "EventSource": "aws.config", 
+            "MessageType": "ScheduledNotification", 
+            "MaximumExecutionFrequency": "TwentyFour_Hours"
+        }
+        ]
+	},
+	"InputParameters": "{<PARAMETERS>}"
+}
+

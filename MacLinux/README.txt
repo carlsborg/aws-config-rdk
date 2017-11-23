@@ -37,8 +37,13 @@ Rules
 - The lambda function $RULE_NAME.zip needs to be in the same directory as the createRule script
 
 
-Example:
-./createRule default python s3_ver ./pythonlambdas/S3-VersioningEnabled.py "AWS::S3::Bucket"
+For config triggered rules:
+
+./createRule default python s3_ver /path/to/pythonlambdas/S3-VersioningEnabled.py "AWS::S3::Bucket"
+
+For periodic rules:
+
+./createRule default python EMR-ec2role /path/to/pythonlambdas/EMR-EC2InstanceRole-DefaultCheck.py  periodic
 
 
 At this point, you have written and created a rule that maybe works, which you need to test. 
