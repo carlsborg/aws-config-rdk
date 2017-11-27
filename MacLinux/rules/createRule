@@ -1,6 +1,6 @@
 #!/bin/bash 
 # ZipFile name = $RULE_NAME.zip
-if [ $# -ne 5 ]
+if [ "$#" -ne 5 ]
     then
         printf $'Usage: ./createRule PROFILE RUNTIME RULE_NAME CODE_FILE APPLICABLE_RESOURCE_TYPES\n'
 		printf $'Example: ./createRule myCLIprofile nodejs desiredInstanceTypeRule codefile "AWS::EC2::Instance,AWS::EC2::VPC"\n'
